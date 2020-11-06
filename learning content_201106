@@ -1,0 +1,102 @@
+SELECT * FORM <테이블 이름>; 
+- 입력한 테이블과 연관된 모든 칼럼 리턴 (정해진 순서대로) (* : 모든,ALL)
+
+SELECT <칼럼1>, <칼럼2>, <칼럼3>, <칼럼4> FROM <테이블 이름>;  
+- 칼럼이 다른 순서가 되도록 하고 싶다면 원하는 순서대로 칼럼 입력
+- 칼럼들 사이에 ,\S 꼭 입력
+
+SELECT <칼럼1>, <칼럼2>, <칼럼3>, <칼럼4>
+FORM <테이블 이름>;
+- 위의 QURRY와 OUTPUT이 동일함
+
+SELECT <칼럼1>, <칼럼2> FROM <테이블 이름>;
+- 원하는 칼럼명만 입력하여 결과값 출력 가능
+
+SELECT DISTINCT <칼럼> FROM <테이블 이름>;
+- 중복 제거 : 지정한 칼럼의 데이터 중복 시 중복 값을 제거하여 한개씩만 나타냄
+
++) 쿼리에서 대소문자는 결과에 영향을 주지 않음
++) SELECT <테이블 이름>; == SELECT ALL <테이블 이름>;
+  - 따라서 ALL은 거의 쓰지 않고 생략
+
+#연습문제1 쿼리 작성하여 칼럼 두 개만 리턴
+SELECT ProductName, UnitPrice from Products;
+#연습문제2 쿼리를 작성하여 모든 고유한 UnitPrice를 리턴
+SELECT UNITPRICE FROM PRODUCTS;
+
+
+----------------------------------------------------------------------------------------
+
+
+SELECT * FROM EMPLOYEES;
+- 데이터베이스 나열
+
+select *
+from employees
+WHERE Title = 'Sales Representative';
+
+SELECT * FROM EMPLOYEES
+WHERE ReportsTo >= 5;
+- 특정 조건에 부합하는 데이터만 조회하고 싶을 때 사용
+
+[산술 연산자]
++ 덧셈  - 뺄셈  / 나눗셈   * 곱셈  % 모듈로(나머지, 십진데이터X)
+우선순위) 곱셈 > 나눗셈 > 모듈로 > 덧셈 > 뺄셈
+
+ex) 2*6+9/3 == 12+3=15
+    2*(6+9)/3 == 2*15/3=10
+
+
+< + 덧셈 >
+SQL> select item, wholesale, wholesale + 0.15
+     from price;
+
+> OUTPUT
+item        wholesale   wholesale+0.15
+----------- ----------- --------------
+TOTATOES           .34            .49
+POTATOES           .51            .66
+BANANAS            .67            .82
+TURNIPS            .45            .60
+CHEESE             .89           1.04
+APPLES             .23            .38
+
+6 rows selected.
+
+
+SQL> SELECT * PRICE;
+
+> OUTPUT
+item        wholesale
+----------- ----------- 
+TOTATOES           .34
+POTATOES           .51
+BANANAS            .67
+TURNIPS            .45
+CHEESE             .89
+APPLES             .23
+
+6 rows selected.
+
+=>> 원래 데이터가 바뀌지 않고 wholesale + 0.15 가 영구적이지 않음
+
+
+SQL> select item, wholesale, (wholesale + 0.15) retail
+     from price;
+     
+> OUTPUT
+item        wholesale           retail
+----------- ----------- --------------
+TOTATOES           .34            .49
+POTATOES           .51            .66
+BANANAS            .67            .82
+TURNIPS            .45            .60
+CHEESE             .89           1.04
+APPLES             .23            .38
+
+6 rows selected.
+
+=>>rename (괄호가 없어도 됨)
+   SQL> select item, wholesale, wholesale + 0.15 retail
+        from price;
+
