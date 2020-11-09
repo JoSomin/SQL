@@ -64,7 +64,7 @@ APPLES             .23            .38
 6 rows selected.
 
 
-SQL> SELECT * PRICE;
+SQL> SELECT * FROM PRICE;
 
 > OUTPUT
 item        wholesale
