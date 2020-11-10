@@ -1,0 +1,609 @@
+[산술 연산자]
++ 덧셈  - 뺄셈  / 나눗셈   * 곱셈  % 모듈로(나머지, 십진데이터X)
+우선순위) 곱셈 > 나눗셈 > 모듈로 > 덧셈 > 뺄셈
+
+ex) 2*6+9/3 == 12+3=15
+    2*(6+9)/3 == 2*15/3=10
+
+< - 마이너스 >
+
+1) 기호를 바꾸는데도 사용
+SQL> SELECT * FROM HILOW;
+
+> OUTPUT
+STATE     HIGHTEMP   LOWTEMP
+--------- ---------- ----------
+CA             -50         120
+FL              20         110
+LA              15          99
+ND             -70         101
+NE             -60         100
+
+
+SQL> SELECT STATE, -HIGHTEMP LOWS, -LOWTEMP HIGHS
+     FORM HILOW;
+     
+> OUTPUT
+STATE           LOWS      HIGHS
+--------- ----------- ----------
+CA                50        -120
+FL               -20        -110
+LA               -15         -99
+ND                70        -101
+NE                60        -100
+
+
+2) 한 칼럼을 빼기도 함
+SQL> SELECT STATE,
+     HIGHTEMP LOWS,
+     LOWTEMP HIGHS,
+     (LOWTEMP - HIGHTEMP) DIFFERENCE
+     FROM HILOWL;
+
+>OUTPUT
+STATE           LOWS      HIGHS    DIFFERENCE
+--------- ----------- ----------  -----------
+CA               -50         120          170
+FL                20         110           90
+LA                15          99           84
+ND               -70         101          171
+NE               -60         100          160
+
+
+
+< / 나누기 >
+SQL> SELECT * FROM PRICE;
+
+> OUTPUT
+item        wholesale
+----------- ----------- 
+TOTATOES           .34
+POTATOES           .51
+BANANAS            .67
+TURNIPS            .45
+CHEESE             .89
+APPLES             .23
+
+
+SQL> SELECT ITEM, WHOLESALE, (WHOLESALE/2) SALEPRICE
+     FROM PRICE;
+     
+> OUTPUT
+item        wholesale    SALEPRICE
+----------- ----------- ----------
+TOTATOES           .34         .17
+POTATOES           .51        .255
+BANANAS            .67        .335
+TURNIPS            .45        .225
+CHEESE             .89        .455
+APPLES             .23        .115
+
+
+
+< * 곱하기 >
+SQL> SELECT * FROM PRICE;
+
+> OUTPUT
+item        wholesale
+----------- ----------- 
+TOTATOES           .34
+POTATOES           .51
+BANANAS            .67
+TURNIPS            .45
+CHEESE             .89
+APPLES             .23
+
+
+SQL> SELECT ITEM, WHOLESALE, WHOLESALE * 0.9 NEWPRICE
+     FROM PRICE;
+     
+> OUTPUT
+item        wholesale    SALEPRICE
+----------- ----------- ----------
+TOTATOES           .34        .306
+POTATOES           .51        .459
+BANANAS            .67        .603
+TURNIPS            .45        .405
+CHEESE             .89        .801
+APPLES             .23        .207
+
+
+
+< % 모듈로 >
+SQL> SELECT * FROM REMAINS;
+
+> OUTPUT
+NUMERATOR DENOMINATOR
+--------- ----------- 
+        10          5
+         8          3
+        23          9
+        40         17
+      1024         16
+        85         34
+        
+        
+SQL> SELECT NUMERATOR,
+     DENOMINATOR,
+     NUMERATOR%DENOMINATOR REMAINDER
+     FROM REMAINS;
+
+> OUTPUT
+NUMERATOR DENOMINATOR REMAINDER
+--------- ----------- ---------
+        10          5         0
+         8          3         2
+        23          9         5
+        40         17         6
+      1024         16         0
+        85         34        17
+        
+SQL> SELECT NUMERATOR,
+     DENOMINATOR,
+     MOD(NUMERATOR,DENOMONATOR) REMAINDER
+     FROM REMAINS;
+     위와 같은 결과를 출력(MOD-모듈로 함수)
+     
+     
+< 우선순위 >
+SQL> SELECT * FROM PRECEDENCE;
+
+> OUTPUT
+      N1      N2      N3      N4
+ ------- ------- ------- -------
+       1       2       3       4
+      13      24      35      46
+       9       3      23       5
+      63       2      45       3
+       7       2       1       4
+       
+ 
+ SQL> SELECT
+      N1+N2*N3/N4,
+      (N1+N2)*N3/N4,
+      N1+(N2*N3)/N4
+      FROM PRECEDENCE;
+     
+> OUTPUT
+ N1+N2*N3/N4 (N1+N2)*N3/N4 N1+(N2*N3)/N4
+ ----------- ------------- -------------
+         2.5          2.25           2.5 
+    31.26087     28.152174      31.26087
+        22.8          55.2          22.8  
+          93           975            93  
+         7.5          2.25           7.5
+         
+         
+[비교 연산자]
+
+< = 등식 >
+SQL> SELECT * FROM FRIENDS;
+
+> OUTPUT
+  LASTNAME      FIRSTNAME    AREACODE  PHONE    ST ZIP
+  ---------- ------------- ----------  -------- -- ----
+  BUNDY         AL                100  555-1111 IL 22333
+  MEZA          AL                200  555-2222 UK
+  MERRICK       BUD               300  555-6666 CO 80212
+  MAST          JD                381  555-6767 LA 23456
+  BULHER        FERRIS            345  555-3223 IL 23332
+  
+  
+SQL> SELECT *
+     FROM FRIENDS
+     WHERE FIRSTNAME = 'JD';
+     
+> OUTPUT
+  LASTNAME      FIRSTNAME    AREACODE  PHONE    ST ZIP
+  ---------- ------------- ----------  -------- -- ----
+  MAST          JD                381  555-6767 LA 23456
+  
+
+SQL> SELECT *
+     FROM FRIENDS
+     WHERE FIRSTNAME = 'AL';
+     
+> OUTPUT
+  LASTNAME      FIRSTNAME    AREACODE  PHONE    ST ZIP
+  ---------- ------------- ----------  -------- -- ----
+  BUNDY         AL                100  555-1111 IL 22333
+  MEZA          AL                200  555-2222 UK
+  
+  
+
+< > 보다 크고 / >= 크거나 같은 >
+SQL> SELECT *
+     FROM FRIENDS
+     WHERE AREACODE > 300;
+     
+> OUTPUT
+  LASTNAME      FIRSTNAME    AREACODE  PHONE    ST ZIP
+  ---------- ------------- ----------  -------- -- ----
+  MAST          JD                381  555-6767 LA 23456
+  BULHER        FERRIS            345  555-3223 IL 23332
+  
+  
+SQL> SELECT *
+     FROM FRIENDS
+     WHERE AREACODE >= 300;
+  
+> OUTPUT
+  LASTNAME      FIRSTNAME    AREACODE  PHONE    ST ZIP
+  ---------- ------------- ----------  -------- -- ----
+  MERRICK       BUD               300  555-6666 CO 80212
+  MAST          JD                381  555-6767 LA 23456
+  BULHER        FERRIS            345  555-3223 IL 23332
+  
+
+< < 보다 작고 / <= 작거나 같은 >
+SQL> SELECT *
+     FROM FRIENDS
+     WHERE STATE < 'LA';    #대문자
+  
+> OUTPUT
+  LASTNAME      FIRSTNAME    AREACODE  PHONE    ST ZIP
+  ---------- ------------- ----------  -------- -- ----
+  BUNDY         AL                100  555-1111 IL 22333
+  MERRICK       BUD               300  555-6666 CO 80212
+  BULHER        FERRIS            345  555-3223 IL 23332
+  
+  +) STATE가 ST로 바뀐이유 : 칼럼이 단지 두개의 문자 길이이기 때문에, 칼럼 이름은 리턴된 행에서 두 문자로 줄여짐.
+                            만약 칼럼 이름이 CROW라면 CO가 됨.
+                            AREACODE와 PHONE은 각각의 칼럼 이름보다 더 넓은 폭을 가지므로 칼럼이 잘리지 않음.
+                        
+                        
+SQL> SELECT *
+     FROM FRIENDS
+     WHERE STATE < 'la';    #소문자
+     
+> OUTPUT
+  LASTNAME      FIRSTNAME    AREACODE  PHONE    ST ZIP
+  ---------- ------------- ----------  -------- -- ----
+  BUNDY         AL                100  555-1111 IL 22333
+  MEZA          AL                200  555-2222 UK
+  MERRICK       BUD               300  555-6666 CO 80212
+  MAST          JD                381  555-6767 LA 23456
+  BULHER        FERRIS            345  555-3223 IL 23332
+  
+  +) 소문자가 대문자 아래에 떨어져 테이블이 빌 거라고 생각하지만 그렇지 않다. ASCII 코드를 잊지마라
+  
+ 
+SQL> SELECT * 
+     FROM FRIENDS
+     WHERE STATE <= 'LA';
+     
+> OUTPUT
+  LASTNAME      FIRSTNAME    AREACODE  PHONE    ST ZIP
+  ---------- ------------- ----------  -------- -- ----
+  BUNDY         AL                100  555-1111 IL 22333
+  MERRICK       BUD               300  555-6666 CO 80212
+  MAST          JD                381  555-6767 LA 23456
+  BULHER        FERRIS            345  555-3223 IL 23332
+  
+  
+  
+< <> 또는 != >
+SQL> SELECT *
+     FROM FRIENDS
+     WHERE FIRSTNAME <> 'AL';   #'AL' 아닌 모든 것
+     
+> OUTPUT
+  LASTNAME      FIRSTNAME    AREACODE  PHONE    ST ZIP
+  ---------- ------------- ----------  -------- -- ----
+  MERRICK       BUD               300  555-6666 CO 80212
+  MAST          JD                381  555-6767 LA 23456
+  BULHER        FERRIS            345  555-3223 IL 23332
+
+
+SQL> SELECT *
+     FROM FRIENDS
+     WHERE FIRSTNAME != 'CA';   #'CA' 아닌 모든 것
+     
+> OUTPUT
+  LASTNAME      FIRSTNAME    AREACODE  PHONE    ST ZIP
+  ---------- ------------- ----------  -------- -- ----
+  BUNDY         AL                100  555-1111 IL 22333
+  MEZA          AL                200  555-2222 UK
+  MERRICK       BUD               300  555-6666 CO 80212
+  MAST          JD                381  555-6767 LA 23456
+  BULHER        FERRIS            345  555-3223 IL 23332
+  
+  
+
+[문자 연산자]
+< LIKE >
+: Search for a pattern
+
+SQL> SELECT * FROM categories
+
+> OUTPUT
+CategoryID	CategoryName    	Description
+----------  ----------------  ----------------------------------------------------------
+1	          Beverages	        Soft drinks, coffees, teas, beers, and ales
+2	          Condiments	      Sweet and savory sauces, relishes, spreads, and seasonings
+3	          Confections	      Desserts, candies, and sweet breads
+4	          Dairy Products	  Cheeses
+5	          Grains/Cereals	  Breads, crackers, pasta, and cereal
+6	          Meat/Poultry	    Prepared meats
+7	          Produce         	Dried fruit and bean curd
+8	          Seafood         	Seaweed and fish
+
+
+SQL> SELECT * FROM categories
+     where categoryname like "c%";    #"C%"과 동일한 결과 값 출력
+     
+> OUTPUT
+CategoryID	CategoryName	Description
+----------  ------------  ----------------------------------------------------------
+2	          Condiments	  Sweet and savory sauces, relishes, spreads, and seasonings
+3	          Confections	  Desserts, candies, and sweet breads
+
+
+
+< _ 밑줄 >
+: 단일 문자
+
+SQL> SELECT * FROM FRIENDS;
+
+> OUTPUT
+  LASTNAME      FIRSTNAME    AREACODE  PHONE    ST ZIP
+  ---------- ------------- ----------  -------- -- ----
+  BUNDY         AL                100  555-1111 IL 22333
+  MEZA          AL                200  555-2222 UK
+  MERRICK       BUD               300  555-6666 CO 80212
+  MAST          JD                381  555-6767 LA 23456
+  BULHER        FERRIS            345  555-3223 IL 23332
+  PERKINS       ALTON             911  555-3116 CA 95633
+  BOSS          SIR               204  555-2345 CT 95633
+  
+  
+SQL> SELECT * 
+     FROM FRIENDS
+     WHERE STATE LIKE 'C_';
+
+> OUTPUT
+  LASTNAME      FIRSTNAME    AREACODE  PHONE    ST ZIP
+  ---------- ------------- ----------  -------- -- ----
+  MERRICK       BUD               300  555-6666 CO 80212
+  PERKINS       ALTON             911  555-3116 CA 95633
+  BOSS          SIR               204  555-2345 CT 95633
+  
+  
+SQL> SELECT * 
+     FROM FRIENDS
+     WHERE PHONE LIKE '555-6_6_';
+
+> OUTPUT
+  LASTNAME    FIRSTNAME    AREACODE  PHONE    ST ZIP
+  ---------- ----------- ----------  -------- -- ----
+  MERRICK     BUD               300  555-6666 CO 80212
+  MAST        JD                381  555-6767 LA 23456
+  
+  
+SQL> SELECT * 
+     FROM FRIENDS
+     WHERE PHONE LIKE '555-6%';
+
+> OUTPUT
+  LASTNAME    FIRSTNAME    AREACODE  PHONE    ST ZIP
+  ---------- ----------- ----------  -------- -- ----
+  MERRICK     BUD               300  555-6666 CO 80212
+  MAST        JD                381  555-6767 LA 23456
+  
+ 
+SQL> SELECT * 
+     FROM FRIENDS
+     WHERE PHONE LIKE '_L%';    #두번째 문자로 L을 가진 모든 레코드를 찾음
+
+> OUTPUT
+  LASTNAME    FIRSTNAME    AREACODE  PHONE    ST ZIP
+  ---------- ----------- ----------  -------- -- ----
+  BUNDY         AL                100  555-1111 IL 22333
+  MEZA          AL                200  555-2222 UK
+  PERKINS       ALTON             911  555-3116 CA 95633
+  
+  
+  
+< || 연결 >
+: 두 문자열을 연결 
+SQL> SELECT FIRSTNAME || LASTNSME ENTIRENAME
+     FROM FRIENDS;
+     
+> OUTPUT
+  ENTIRENAME
+  -------------------------
+  AL            BUNDY        
+  AL            MEZA
+  BUD           MERRICK 
+  JD            MAST 
+  FERRIS        BULHER
+  ALTON         PERKINS
+  SIR           BOSS
+  
+  +) ||이 + 대신 사용 됨
+     만약 +를 사용하여 문자열 연결 시 숫자를 찾게 되고 incalid number 에러를 출력함
+     
+  
+  
+[ BETWEEN 연산자 ]
+: 범위가 필요한 경우
+
+SQL> SELECT * FROM Products
+     WHERE Price BETWEEN 50 AND 60;
+     
+> OUTPUT
+ProductID	  ProductName	            SupplierID	 CategoryID  Unit              Price
+----------  ----------------------  ------------ ----------- ----------------- ------
+51	        Manjimup Dried Apples	  24	         7	         50 - 300 g pkgs.	 53
+59	        Raclette Courdavault	  28	         4	         5 kg pkg.	       55
+
+
+
+[ IN 연산자 ]
+: To specify multiple possible values for a column
+
+SQL> SELECT * FROM Customers
+     WHERE City IN ('Paris','London');
+     
+> OUTPUT
+CustomerID	CustomerName	           ContactName	        Address	                      City	  PostalCode	 Country
+----------  -----------------------  -------------------  ----------------------------  ------- -----------  --------
+4	          Around the Horn	         Thomas Hardy	        120 Hanover Sq.	              London	WA1 1DP	     UK
+11	        B's Beverages	           Victoria Ashworth	  Fauntleroy Circus	            London	EC2 5NT	     UK
+16	        Consolidated Holdings	   Elizabeth Brown	    Berkeley Gardens 12 Brewery	  London	WX1 6LT	     UK
+19	        Eastern Connection	     Ann Devon	          35 King George	              London	WX3 6FW      UK
+53	        North/South	             Simon Crowther	      South House 300 Queensbridge	London	SW7 1RZ	     UK
+57	        Paris spécialités	       Marie Bertrand	      265, boulevard Charonne	      Paris	  75012	       France
+72	        Seven Seas Imports	     Hari Kumar	          90 Wadhurst Rd.	              London	OX15 4NB	   UK
+74	        Spécialités du monde	   Dominique Perrier	  25, rue Lauriston	            Paris	  75016   	   France
+...
+
+
+SQL> SELECT * FROM Customers
+     WHERE City= 'Paris'
+     OR
+     City= 'London';        #위와 같은 결과 값을 출력
+     
++) condition 대소문자 구분 주의!   
+     
+     
+     
+[ 논리 연산자 ]
+< AND >
+
+SQL> SELECT * FROM Customers
+     WHERE Country='Germany' AND City='Berlin';
+     
+> OUTPUT
+CustomerID	CustomerName	        ContactName  	Address	       City	    PostalCode	 Country
+----------- --------------------  ------------  -------------- -------- ------------ -------- 
+1	          Alfreds Futterkiste	  Maria Anders  Obere Str. 57	 Berlin	  12209	       Germany
+
+
+
+< OR >
+SQL> SELECT * FROM Customers
+     WHERE City='Berlin' OR City='München' OR City='Madrid';
+     
+> OUTPUT
+CustomerID	CustomerName	                          ContactName        Address	              City	      PostalCode	Country
+----------- -------------------------------------  ------------------  ---------------------- ---------- ----------- -------- 
+1	          Alfreds Futterkiste	                    Maria Anders	      Obere Str. 57	        Berlin	  12209	      Germany
+8	          Bólido Comidas preparadas     	        Martín Sommer	      C/ Araquil, 67        Madrid	  28023	      Spain
+22	        FISSA Fabrica Inter. Salchichas S.A.	  Diego Roel	        C/ Moralzarzal, 86	  Madrid	  28034	      Spain
+25	        Frankenversand	                        Peter Franken	      Berliner Platz 43	    München	  80805	      Germany
+69	        Romero y tomillo	                      Alejandra Camino	  Gran Vía, 1	          Madrid	  28001	      Spain
+
+
+
+< NOT >
+SQL> SELECT * FROM suppliers
+     WHERE NOT Country='Japan';
+     
+> OUTPUT
+SupplierID	SupplierName	                      ContactName 	              Address	                  City	      PostalCode	Country	  Phone
+----------- ----------------------------------- --------------------------- ------------------------- ----------- ----------- --------- ---------------
+1	          Exotic Liquid	                      Charlotte Cooper	          49 Gilbert St.	          Londona	    EC1 4SD	    UK	      (171) 555-2222
+2	          New Orleans Cajun Delights	        Shelley Burke	              P.O. Box 78934	          New Orleans	70117     	USA	      (100) 555-4822
+3	          Grandma Kelly's Homestead	          Regina Murphy	              707 Oxford Rd.	          Ann Arbor	  48104	      USA	      (313) 555-5735
+5         	Cooperativa de Quesos 'Las Cabras'	Antonio del Valle Saavedra	Calle del Rosal 4	        Oviedo	    33007	      Spain	    (98) 598 76 54
+7	          Pavlova, Ltd.                     	Ian Devling	                74 Rose St. Moonie Ponds	Melbourne	  3058	      Australia	(03) 444-2343
+8	          Specialty Biscuits, Ltd.	          Peter Wilson	              29 King's Way	            Manchester	M14 GSD	    UK	      (161) 555-4448
+9         	PB Knäckebröd AB	                  Lars Peterson	              Kaloadagatan 13	          Göteborg	  S-345 67	  Sweden	  031-987 65 43
+...
+
+
+< and, or, not ?>
+SQL> SELECT * FROM Customers
+     WHERE Country='Germany' AND (City='Berlin' OR City='München');
+     
+> OUTPUT
+CustomerID	CustomerName	                          ContactName        Address	              City	      PostalCode	Country
+----------- -------------------------------------  ------------------  ---------------------- ---------- ----------- -------- 
+1	          Alfreds Futterkiste	                    Maria Anders	      Obere Str. 57	        Berlin	  12209	      Germany
+25	        Frankenversand	                        Peter Franken	      Berliner Platz 43	    München	  80805	      Germany
+
+
+SQL> SELECT * FROM Customers
+     HERE NOT Country='Germany' AND NOT Country='USA';
+     
+> OUTPUT
+CustomerID	CustomerName	                      ContactName	        Address                 	      City	      PostalCode	Country
+----------- ----------------------------------- ------------------- ------------------------------- ----------- ----------- --------
+2	          Ana Trujillo mparedados y helados	  Ana Trujillo	      Avda. de la Constitución 2222	  México D.F.	05021     	Mexico
+3	          Antonio Moreno Taquería	            Antonio Moreno	    Mataderos 2312	                México D.F.	05023	      Mexico
+4	          Around the Horn	                    Thomas Hardy	      120 Hanover Sq.               	London	    WA1 1DP	    UK
+5	          Berglunds snabbköp	                Christina Berglund	Berguvsvägen 8	                Luleå	      S-958 22	  Sweden
+7	          Blondel père et fils	              Frédérique Citeaux	24, place Kléber	              Strasbourg	67000     	France
+8	          Bólido Comidas preparadas	          Martín Sommer     	C/ Araquil, 67	                Madrid	    28023     	Spain
+9	          Bon app'	                          Laurence Lebihans	  12, rue des Bouchers	          Marseille	  13008     	France
+...
+
+
+
+[ ORDER BY ]
+SQL> SELECT * FROM Customers
+     ORDER BY Country;
+     
+> OUTPUT
+CustomerID	CustomerName	              ContactName      	Address	                              City	        PostalCode	Country
+----------- --------------------------- ----------------- ------------------------------------- ------------- ----------- ----------
+12	        Cactus Comidas para llevar	Patricio Simpson	Cerrito 333	                          Buenos Aires	1010	      Argentina
+54        	Océano Atlántico Ltda.	    Yvonne Moncada	  Ing. Gustavo Moncada 8585 Piso 20-A	  Buenos Aires	1010	      Argentina
+64        	Rancho grande	              Sergio Gutiérrez	Av. del Libertador 900	              Buenos Aires	1010	      Argentina
+20        	Ernst Handel	              Roland Mendel	    Kirchgasse 6	                        Graz	        8010	      Austria
+59        	Piccolo und mehr	          Georg Pipps     	Geislweg 14	                          Salzburg	    5020	      Austria
+50	        Maison Dewey	              Catherine Dewey	  Rue Joseph-Bens 532	                  Bruxelles   	B-1180	    Belgium
+76	        Suprêmes délices	          Pascale Cartrain	Boulevard Tirou, 255	                Charleroi	    B-6000	    Belgium
+...
+
+
+SQL> SELECT * FROM Customers
+     ORDER BY Country, CunstomerName;   #it orders by Country, but if some rows have the same Country, it orders them by CustomerName
+     
+> OUTPUT
+CustomerID	CustomerName	              ContactName      	Address	                              City	        PostalCode	Country
+----------- --------------------------- ----------------- ------------------------------------- ------------- ----------- ----------
+12	        Cactus Comidas para llevar	Patricio Simpson	Cerrito 333	                          Buenos Aires	1010	      Argentina
+54        	Océano Atlántico Ltda.	    Yvonne Moncada	  Ing. Gustavo Moncada 8585 Piso 20-A	  Buenos Aires	1010	      Argentina
+64        	Rancho grande	              Sergio Gutiérrez	Av. del Libertador 900	              Buenos Aires	1010	      Argentina
+20        	Ernst Handel	              Roland Mendel	    Kirchgasse 6	                        Graz	        8010	      Austria
+59        	Piccolo und mehr	          Georg Pipps     	Geislweg 14	                          Salzburg	    5020	      Austria
+50	        Maison Dewey	              Catherine Dewey	  Rue Joseph-Bens 532	                  Bruxelles   	B-1180	    Belgium
+76	        Suprêmes délices	          Pascale Cartrain	Boulevard Tirou, 255	                Charleroi	    B-6000	    Belgium
+...
+
+
+[ ORDER BY DESC ]
+SQL> SELECT * FROM Customers
+     ORDER BY Country DESC;
+
+> OUTPUT
+CustomerID	CustomerName	              ContactName      	Address	                                        City	          PostalCode	Country
+----------- --------------------------- ----------------- ---------------------------------------------- ---------------- ----------- ----------
+33	        GROSELLA-Restaurante	      Manuel Pereira	  5ª Ave. Los Palos Grandes	                      Caracas	        1081	      Venezuela
+35        	HILARIÓN-Abastos	          Carlos Hernández	Carrera 22 con Ave. Carlos Soublette #8-35	    San Cristóbal	  5022	      Venezuela
+46        	LILA-Supermercado	          Carlos González 	Carrera 52 con Ave. Bolívar #65-98 Llano Largo	Barquisimeto	  3508	      Venezuela
+47	        LINO-Delicateses	          Felipe Izquierdo	Ave. 5 de Mayo Porlamar	                        I. de Margarita	4980	      Venezuela
+32	        Great Lakes Food Market   	Howard Snyder	    2732 Baker Blvd.	                              Eugene	        97403	      USA
+36	        Hungry Coyote Import Store	Yoshi Latimer   	City Center Plaza 516 Main St.	                Elgin	          97827	      USA
+43	        Lazy K Kountry Store	      John Steel	      12 Orchestra Terrace	                         Walla Walla	    99362	      USA
+...
+
+
+SQL> SELECT * FROM Customers
+     ORDER BY Country ASC, CustomerName DESC;
+
+> OUTPUT
+CustomerID	CustomerName	              ContactName      	Address	                              City	        PostalCode	Country
+----------- --------------------------- ----------------- ------------------------------------- ------------- ----------- ----------
+64        	Rancho grande	              Sergio Gutiérrez	Av. del Libertador 900	              Buenos Aires	1010	      Argentina
+54        	Océano Atlántico Ltda.	    Yvonne Moncada	  Ing. Gustavo Moncada 8585 Piso 20-A	  Buenos Aires	1010	      Argentina
+12	        Cactus Comidas para llevar	Patricio Simpson	Cerrito 333	                          Buenos Aires	1010	      Argentina
+59        	Piccolo und mehr	          Georg Pipps     	Geislweg 14	                          Salzburg	    5020	      Austria
+20        	Ernst Handel	              Roland Mendel	    Kirchgasse 6	                        Graz	        8010	      Austria
+76	        Suprêmes délices	          Pascale Cartrain	Boulevard Tirou, 255	                Charleroi	    B-6000	    Belgium
+50	        Maison Dewey	              Catherine Dewey	  Rue Joseph-Bens 532	                  Bruxelles   	B-1180	    Belgium
+...
+
+
