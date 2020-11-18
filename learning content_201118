@@ -1,0 +1,487 @@
+[ SELECT DISTINCT ]
+SQL> SELECT DISTINCT Country FROM Customers;
+
+> OUTOUT
+Country
+-------------
+Germany
+Mexico
+UK
+Sweden
+France
+Spain
+Canada
+Argentina
+Switzerland
+Brazil
+Austria
+Italy
+Portugal
+USA
+Venezuela
+Ireland
+Belgium
+Norway
+Denmark
+Finland
+Poland
+null
+
+
+SQL> SELECT COUNT(DISTINCT Country) FROM Customers;
+
+> OUTPUT
+COUNT(DISTINCT Country)
+--------------------------
+21
+
++) A NULL value is different from a zero value or a field that contains spaces. A field with a NULL value is one that has been left blank during record creation!
+
+
+SQL> SELECT Count(*) AS DistinctCountries
+     FROM (SELECT DISTINCT Country FROM Customers);
+
+>OUTPUT
+DistinctCountries
+--------------------
+22
+
+
+
+[ INSERT INTO ]
+INSERT INTO table_name (column1, column2, column3, ...)
+VALUES (value1, value2, value3, ...);
+
+INSERT INTO table_name
+VALUES (value1, value2, value3, ...);
+=>> If you are adding values for all the columns of the table, you do not need to specify the column names in the SQL query.
+    However, make sure the order of the values is in the same order as the columns in the table.
+    
+    
+SQL> INSERT INTO Customers (CustomerName, ContactName, Address, City, PostalCode, Country)
+     VALUES ('Cardinal', 'Tom B. Erichsen', 'Skagen 21', 'Stavanger', '4006', 'Norway');
+
+>OUTPUT
+You have made changes to the database. Rows affected: 1
+
+
+SQL> INSERT INTO Customers (CustomerName, City, Country)          #Insert Data Only In Specified columns
+     VALUES ('Cardinal', 'Stavanger', 'Norway');
+
+>OUTPUT
+You have made changes to the database. Rows affected: 1
+
+
+
+[ VALUES NULL ]
+SQL> SELECT CustomerName, ContactName, Address
+     FROM Customers
+     WHERE Address IS NULL;
+     
+>OUTPUT
+CustomerName	ContactName	 Address
+------------- ------------ --------
+honggidong	  hong	       null
+Cardinal	    null	       null
+
+
+SQL> SELECT CustomerName, ContactName, Address
+     FROM Customers
+     WHERE Address IS NOT NULL;
+
+>OUTPUT
+CustomerName	                      ContactName	        Address
+----------------------------------- ------------------- --------------------------------
+Alfreds Futterkiste	                Maria Anders	      Obere Str. 57
+Ana Trujillo Emparedados y helados	Ana Trujillo	      Avda. de la Constitución 2222
+Antonio Moreno Taquería	            Antonio Moreno	    Mataderos 2312
+Around the Horn	                    Thomas Hardy	      120 Hanover Sq.
+Berglunds snabbköp	                Christina Berglund	Berguvsvägen 8
+Blauer See Delikatessen	            Hanna Moos	        Forsterstr. 57
+Blondel père et fils	              Frédérique Citeaux	24, place Kléber
+...
+
+
+
+[ UNION ]
+SQL> SELECT City FROM Customers
+     UNION                              #중복 데이터는 리턴하지 않음
+     SELECT City FROM Suppliers
+     ORDER BY City;
+
+>OUTPUT
+City
+---------------
+null
+Aachen
+Albuquerque
+Anchorage
+Ann Arbor
+Annecy
+Barcelona
+Barquisimeto
+Bend
+Bergamo
+Berlin
+Bern
+Boise
+Boston
+Brandenburg
+Bruxelles
+Bräcke
+Buenos Aires
+Butte
+Campinas
+...
+
+
+
+[ UNION ALL ]
+SQL> SELECT City FROM Customers
+     UNION ALL                    #중복 데이터 리턴
+     SELECT City FROM Suppliers
+     ORDER BY City;
+
+>OUTPUT
+City
+---------------
+null
+Aachen
+Albuquerque
+Anchorage
+Ann Arbor
+Annecy
+Barcelona
+Barquisimeto
+Bend
+Bergamo
+Berlin
+Berlin
+Bern
+Boise
+Boston
+Brandenburg
+Bruxelles
+Bräcke
+Buenos Aires
+Buenos Aires
+Buenos Aires
+Butte
+Campinas
+...
+
+
+
+[ UNION with WHERE]
+SQL> SELECT City, Country FROM Customers
+     WHERE Country='Germany'
+     UNION
+     SELECT City, Country FROM Suppliers
+     WHERE Country='Germany'
+     ORDER BY City;
+
+>OUTPUT
+City	          Country
+--------------- ---------
+Aachen	        Germany
+Berlin	        Germany
+Brandenburg	    Germany
+Cunewalde	      Germany
+Cuxhaven	      Germany
+Frankfurt	      Germany
+Frankfurt a.M.	Germany
+Köln	          Germany
+Leipzig	        Germany
+Mannheim	      Germany
+München	        Germany
+Münster	        Germany
+Stuttgart     	Germany
+
+
+
+[ INTERSECT ]
+SQL> SELECT City FROM Customers
+     INTERSECT                      #양 쪽에 모두 있는 데이터 리턴
+     SELECT City FROM Suppliers
+     ORDER BY City;
+
+>OUTPUT
+City
+------------
+Berlin
+Montréal
+Paris
+São Paulo
+
+
+
+[ IN ]
+SQL> SELECT * FROM Customers
+     WHERE Country IN ('Germany', 'France', 'UK');
+
+>OUTPUT
+CustomerID	CustomerName	          ContactName	        Address	                    City	      PostalCode	Country
+----------- ----------------------- ------------------- --------------------------- ----------- ----------- --------
+1	          Alfreds Futterkiste	    Maria Anders	      Obere Str. 57	              Berlin	    12209	      Germany
+4	          Around the Horn	        Thomas Hardy	      120 Hanover Sq.	            London	    WA1 1DP   	UK
+6	          Blauer See Delikatessen	Hanna Moos	        Forsterstr. 57	            Mannheim	  68306	      Germany
+7	          Blondel père et fils	  Frédérique Citeaux	24, place Kléber	          Strasbourg	67000	      France
+9	          Bon app'	              Laurence Lebihans	  12, rue des Bouchers	      Marseille	  13008	      France
+11	        B's Beverages	          Victoria Ashworth	  Fauntleroy Circus	          London	    EC2 5NT	    UK
+16	        Consolidated Holdings	  Elizabeth Brown	    Berkeley Gardens 12 Brewery	London	    WX1 6LT	    UK
+...
+
+
+SQL> SELECT * FROM Customers
+     WHERE Country NOT IN ('Germany', 'France', 'UK');
+
+>OUTPUT
+CustomerID	CustomerName	                      ContactName	        Address	                      City	        PostalCode	Country
+----------- ----------------------------------- ------------------- ----------------------------- ------------- ----------- -----------
+2	          Ana Trujillo Emparedados y helados	Ana Trujillo	      Avda. de la Constitución 2222	México D.F.	  05021	      Mexico
+3	          Antonio Moreno Taquería	            Antonio Moreno	    Mataderos 2312	              México D.F.	  05023	      Mexico
+5	          Berglunds snabbköp	                Christina Berglund	Berguvsvägen 8	              Luleå	        S-958 22	  Sweden
+8	          Bólido Comidas preparadas	          Martín Sommer      	C/ Araquil, 67	              Madrid	      28023   	  Spain
+10	        Bottom-Dollar Marketse	            Elizabeth Lincoln	  23 Tsawassen Blvd.	          Tsawassen	    T2F 8M4	    Canada
+12	        Cactus Comidas para llevar	        Patricio Simpson	  Cerrito 333	                  Buenos Aires	1010	      Argentina
+13	        Centro comercial Moctezuma	        Francisco Chang	    Sierras de Granada 9993	      México D.F.	  05022	      Mexico
+14	        Chop-suey Chinese	                  Yang Wang	          Hauptstr. 29	                Bern	        3012	      Switzerland
+15	        Comércio Mineiro	                  Pedro Afonso	      Av. dos Lusíadas, 23	        São Paulo	    05432-043	  Brazil
+...
+
+
+SQL> SELECT * FROM Customers
+     WHERE Country IN (SELECT Country FROM Suppliers);
+     
+>OUTPUT
+CustomerID	CustomerName	          ContactName	        Address	                    City	      PostalCode	Country
+----------- ----------------------- ------------------- --------------------------- ----------- ----------- --------
+1	          Alfreds Futterkiste	        Maria Anders	      Obere Str. 57	           Berlin	    12209	      Germany
+4	          Around the Horn	            Thomas Hardy	      120 Hanover Sq.	         London	    WA1 1DP   	UK
+5	          Berglunds snabbköp	        Christina Berglund	Berguvsvägen 8	         Luleå	    S-958 22	  Sweden
+6	          Blauer See Delikatessen	    Hanna Moos	        Forsterstr. 57	         Mannheim	  68306	      Germany
+7	          Blondel père et fils	      Frédérique Citeaux	24, place Kléber	       Strasbourg	67000	      France
+8	          Bólido Comidas preparadas	  Martín Sommer      	C/ Araquil, 67	         Madrid	    28023   	  Spain
+9	          Bon app'	                  Laurence Lebihans	  12, rue des Bouchers	   Marseille	13008	      France
+10	        Bottom-Dollar Marketse	    Elizabeth Lincoln	  23 Tsawassen Blvd.	     Tsawassen	T2F 8M4	    Canada
+11	        B's Beverages	              Victoria Ashworth	  Fauntleroy Circus	       London	    EC2 5NT	    UK
+15	        Comércio Mineiro	          Pedro Afonso	      Av. dos Lusíadas, 23	   São Paulo  05432-043	  Brazil
+...
+
+
+
+[ BETWEEN ]
+SQL> SELECT * FROM Products
+     WHERE Price BETWEEN 10 AND 20;
+
+>OUTPUT
+ProductID	ProductName	    SupplierID	CategoryID	Unit	                Price
+--------- --------------- ----------- ----------- --------------------- -------
+1	        Chais	          1	          1	          10 boxes x 20 bags	  18
+2	        Chang	          1	          1	          24 - 12 oz bottles	  19
+3	        Aniseed Syrup 	1	          2	          12 - 550 ml bottles	  10
+15	      Genen Shouyu	  6	          2	          24 - 250 ml bottles	  15.5
+16	      Pavlova	        7	          3	          32 - 500 g boxes	    17.45
+...
+
+
+SQL> SELECT * FROM Products
+     WHERE Price NOT BETWEEN 10 AND 20;
+     
+>OUTPUT
+ProductID	ProductName	                    SupplierID	CategoryID	Unit	          Price
+--------- ------------------------------- ----------- ----------- --------------- -------
+4	        Chef Anton's Cajun Seasoning	  2	          2	          48 - 6 oz jars	22
+5	        Chef Anton's Gumbo Mix	        2	          2	          36 boxes	      21.35
+6	        Grandma's Boysenberry Spread	  3	          2	          12 - 8 oz jars	25
+7	        Uncle Bob's Organic Dried Pears	3	          7	          12 - 1 lb pkgs.	30
+8	        Northwoods Cranberry Sauce	    3	          2	          12 - 12 oz jars	40
+...
+
+
+SQL> SELECT * FROM Products
+     WHERE Price BETWEEN 10 AND 20
+     AND CategoryID NOT IN (1,2,3);
+
+>OUTPUT
+ProductID	ProductName     	            SupplierID	CategoryID	Unit	            Price
+--------- ----------------------------- ----------- ----------- ----------------- --------
+31	      Gorgonzola Telino	            14	        4	          12 - 100 g pkgs	  12.5
+36	      Inlagd Sill	                  17	        8	          24 - 250 g jars	  19
+40	      Boston Crab Meat	            19		      8	          24 - 4 oz tins	  18.4
+42	      Singaporean Hokkien Fried Mee	20	        5	          32 - 1 kg pkgs.	  14
+46	      Spegesild	                    21	        8	          4 - 450 g glasses	12
+57	      Ravioli Angelo	              26	        5	          24 - 250 g pkgs.	19.5
+58	      Escargots de Bourgogne	      27	        8	          24 pieces	        13.25
+73	      Röd Kaviar	                  17	        8	          24 - 150 g jars	  15
+74	      Longlife Tofu	                4		        7	          5 kg pkg.	        10
+
+
+SQL> SELECT * FROM Products
+     WHERE ProductName BETWEEN "Carnarvon Tigers" AND "Chef Anton's Cajun Seasoning"
+     ORDER BY ProductName;
+
+>OUTPUT
+ProductID	ProductName	                  SupplierID	CategoryID	Unit	              Price
+--------- ----------------------------- ----------- ----------- ------------------- ------
+18	      Carnarvon Tigers	            7			      8	          16 kg pkg.	        62.5
+1	        Chais	                        1		        1	          10 boxes x 20 bags	18
+2	        Chang	                        1		        1	          24 - 12 oz bottles	19
+39	      Chartreuse verte	            18	        1	          750 cc per bottle	  18
+4	        Chef Anton's Cajun Seasoning	2		        2	          48 - 6 oz jars	    22
+
+
+SQL> SELECT * FROM Orders
+     WHERE OrderDate BETWEEN #01/07/1996# AND #31/07/1996#;
+
+>OUTPUT
+OrderID	CustomerID	EmployeeID	OrderDate	ShipperID
+------- ----------- ----------- --------- ---------
+10248 	90 	        5 	        7/4/1996 	3 
+10249 	81        	6 	        7/5/1996 	1 
+10250 	34 	        4 	        7/8/1996 	2 
+10251 	84      	  3 	        7/8/1996 	1 
+10252 	76 	        4 	        7/9/1996 	2 
+...
+
+
+
+< 함수 functions >
+[ COUNT ] 
+SQL> SELECT COUNT(ProductID)
+     FROM Products;
+
+>OUTPUT
+COUNT(ProductID)
+----------------
+77
+
+
+
+[ AVG ]
+SQL> SELECT AVG(Price)
+     FROM Products;
+
+>OUTPUT
+AVG(Price)
+-------------------
+28.866363636363637
+
+
+
+[ SUM ]
+SQL> SELECT SUM(Quantity)
+     FROM OrderDetails;
+
+>OUTPUT
+SUM(Quantity)
+--------------
+12743
+
+
+
+[ MIN ]
+SQL> SELECT MIN(Price) AS SmallestPrice
+     FROM Products; 
+
+>OUTPUT
+SmallestPrice
+---------------
+2.5
+
+
+[ MAX ]
+SQL> SELECT MAX(Price) AS LargestPrice
+     FROM Products;
+
+>OUTPUT
+LargestPrice
+-------------
+263.5
+
+
+
+[ GROUP BY ]
+SELECT column_name(s)
+FROM table_name
+WHERE condition
+GROUP BY column_name(s)
+ORDER BY column_name(s);
+
+GROUP BY절 : 그룹 함수와 함께 쓰임. 그룹함수 결과 값은 GROUP BY 절에 기술된 컬럼의 항목들의 행의 개수에 의해 결정된다.
+           : 지정된 칼럼 값이 같은 행에 대한 통계 정보
+           : 여러 칼럼을 그룹화 할 경우 GROUP BY 절에 나열된 칼럼들 값이 모두 같아야 같은 그룹으로 묶임.
+             EX)
+             SQL> select column_name1 rename1, column_name2 rename2, column_name3 rename3, sum(column_name4)
+                  from table_name1
+                  group by column_name1, column_name2, column_name3
+                  order by column_name1;
+                  즉, column_name1,2,3 의 값들이 모두 같아야 같은 그룹으로 묶인다.
+           : 그룹 함수가 중첩된 경우 GROUP BY절에 기술한 컬럼도 출력 할 수 없음.
+
+
+SQL> SELECT COUNT(CustomerID), Country
+     FROM Customers
+     GROUP BY Country;
+
+>OUTPUT
+COUNT(CustomerID)	Country
+----------------- -------------
+1	                null
+3	                Argentina
+2	                Austria
+2	                Belgium
+9	                Brazil
+3	                Canada
+2	                Denmark
+2	                Finland
+11	              France
+11	              Germany
+1	                Ireland
+3	                Italy
+5	                Mexico
+7	                Norway
+1	                Poland
+2	                Portugal
+5	                Spain
+2	                Sweden
+2	                Switzerland
+7	                UK
+13	              USA
+4	                Venezuela
+
+
+SQL> SELECT Shippers.ShipperName,COUNT(Orders.OrderID) AS NumberOfOrders FROM Orders
+     LEFT JOIN Shippers ON Orders.ShipperID = Shippers.ShipperID
+     GROUP BY ShipperName;
+
+
+>OUTPUT
+ShipperName	      NumberOfOrders
+----------------- ---------------
+Federal Shipping	68
+Speedy Express	  54
+United Package	  74
+
+
+- Orders -
+OrderID	CustomerID	EmployeeID	OrderDate	  ShipperID
+------- ----------- ----------- ----------- ----------
+10248	  90	        5		        1996-07-04	3
+10249	  81	        6		        1996-07-05	1
+10250	  34	        4		        1996-07-08	2
+10251	  84	        3		        1996-07-08	1
+10252	  76	        4	        	1996-07-09	2
+10253	  34	        3	        	1996-07-10	2
+10254	  14	        5	        	1996-07-11	2
+10255	  68	        9		        1996-07-12	3
+...
+
+- Shippers -
+ShipperID 	ShipperName     	Phone
+----------- ----------------- ------------
+1	         Speedy Express	    (503) 555-9831
+2	         United Package	    (503) 555-3199
+3	         Federal Shipping	  (503) 555-9931
+
+
