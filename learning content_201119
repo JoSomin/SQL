@@ -1,0 +1,148 @@
+[ HAVING ]
+SELECT column_name(s)
+FROM table_name
+WHERE condition
+GROUP BY column_name(s)
+HAVING condition
+ORDER BY column_name(s);
+
+HAVING 절 : HAVING 절은 GROUP BY 절 뒤에 기술.
+          : HAVING 절의 조건은 그룹 함수를 포함해야 함
+          : SQL문장에서 일반 조건은 WHERE절에 기술하지만 조건에 그룹 함수가 포함된 경우에는 HAVING절에 기술해야 함
+
+SQL> SELECT COUNT(CustomerID), Country
+     FROM Customers
+     GROUP BY Country
+     HAVING COUNT(CustomerID) > 5;
+
+>OUTPUT
+COUNT(CustomerID)	Country
+----------------- ---------
+9               	Brazil
+11               	France
+11               	Germany
+7               	Norway
+7               	UK
+13               	USA
+
+
+SQL> SELECT COUNT(CustomerID), Country
+     FROM Customers
+     GROUP BY Country
+     HAVING COUNT(CustomerID) > 5
+     ORDER BY COUNT(CustomerID) DESC;
+     
+>OUTPUT
+COUNT(CustomerID)	Country
+----------------- ---------
+13               	USA
+11               	Germany
+11               	France
+9               	Brazil
+7               	UK
+7               	Norway
+
+
+SQL> SELECT Employees.LastName, COUNT(Orders.OrderID) AS NumberOfOrders
+     FROM (Orders
+     INNER JOIN Employees ON Orders.EmployeeID = Employees.EmployeeID)
+     GROUP BY LastName
+     HAVING COUNT(Orders.OrderID) > 10;
+     
+>OUTPUT
+LastName	  NumberOfOrders
+----------- ---------------
+Buchanan	  11
+Callahan	  27
+Davolio	    29
+Fuller	    20
+King	      14
+Leverling	  31
+Peacock 	  40
+Suyama	    18
+
+
+SQL> SELECT Employees.LastName, COUNT(Orders.OrderID) AS NumberOfOrders
+     FROM Orders
+     INNER JOIN Employees ON Orders.EmployeeID = Employees.EmployeeID
+     WHERE LastName = 'Davolio' OR LastName = 'Fuller'
+     GROUP BY LastName
+     HAVING COUNT(Orders.OrderID) > 25;
+
+>OUTPUT
+LastName	  NumberOfOrders
+----------- ---------------
+Davolio	    29
+
+
+
+
+◈
+from 절에 기술한 테이블에서
+where 절에 기술한 조건에 해당하는 내용들만 정리
+정리된 내용들을 가지고 group by 절에 나열된 컬럼에 대해서 그룹을 만듦
+만들어진 그룹별로 having절에 기술된 그룹함수로 계산하여 having절 조건에 맞는 그룹만 추림
+추려진 그룹들을 order by 절에 잇는 조건으로 정렬
+마지막으로 select절에 있는 그룹화된 컬럼 또는 그룹함수를 화면에 출력
+
+
+
+[ INNER JOIN ]
+SELECT column_name(s)
+FROM table1
+INNER JOIN table2
+ON table1.column_name = table2.column_name;
+
+: INNER JOIN을 JOIN이라고만 해도 INNER JOIN이라고 인식.
+
+
+SQL> SELECT Orders.OrderID, Customers.CustomerName
+     FROM Orders
+     INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID;
+
+>OUTPUT
+OrderID	CustomerName
+------- ------------------------
+10248 	Wilman Kala
+10249	  Tradição Hipermercados
+10250	  Hanari Carnes
+10251	  Victuailles en stock
+10252	  Suprêmes délices
+10253 	Hanari Carnes
+10254	  Chop-suey Chinese
+...
+
+
+SQL> SELECT Orders.OrderID, Customers.CustomerName, Shippers.ShipperName
+     FROM ((Orders
+     INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID)
+     INNER JOIN Shippers ON Orders.ShipperID = Shippers.ShipperID);
+
+>OUTPUT
+OrderID	CustomerName	          ShipperName
+------- ----------------------- ------------------
+10248 	Wilman Kala	            Federal Shipping
+10249 	Tradição Hipermercados	Speedy Express
+10250 	Hanari Carnes	          United Package
+10251 	Victuailles en stock	  Speedy Express
+10252 	Suprêmes délices	      United Package
+10253	  Hanari Carnes	          United Package
+10254	  Chop-suey Chinese	      United Package
+10255	  Richter Supermarkt	    Federal Shipping
+...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
