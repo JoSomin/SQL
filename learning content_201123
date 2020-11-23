@@ -1,0 +1,328 @@
+[ LEFT (OUTER) JOIN ]
+SELECT column_name(s)
+FROM table1
+LEFT JOIN table2
+ON table1.column_name = table2.column_name;
+
+: The LEFT JOIN keyword returns all records from the left table (table1), and the matched records from the right table (table2). The result is NULL from the right side, if there is no match.
+: In some databases LEFT JOIN is called LEFT OUTER JOIN.
+
+
+SQL> SELECT Customers.CustomerName, Orders.OrderID
+     FROM Customers
+     LEFT JOIN Orders
+     ON Customers.CustomerID=Orders.CustomerID
+     ORDER BY Customers.CustomerName;
+     
+: The LEFT JOIN keyword returns all records from the left table (Customers), even if there are no matches in the right table (Orders).
+
+>OUTPUT
+CustomerName	                      OrderID
+----------------------------------- --------
+Alfreds Futterkiste	                null
+Ana Trujillo Emparedados y helados	10308
+Antonio Moreno Taquería	            10365
+Around the Horn	                    10355
+Around the Horn	                    10383
+B's Beverages	                      10289
+Berglunds snabbköp	                10278
+Berglunds snabbköp	                10280
+Berglunds snabbköp	                10384
+Blauer See Delikatessen	            null
+Blondel père et fils	              10265
+...
+
+
+
+[ RIGHT (OUTER) JOIN ]
+SELECT column_name(s)
+FROM table1
+RIGHT JOIN table2
+ON table1.column_name = table2.column_name;
+
+: The RIGHT JOIN keyword returns all records from the right table (table2), and the matched records from the left table (table1). The result is NULL from the left side, when there is no match.
+: In some databases RIGHT JOIN is called RIGHT OUTER JOIN.
+
+
+SQL> SELECT Orders.OrderID, Employees.LastName, Employees.FirstName
+     FROM Orders
+     RIGHT JOIN Employees ON Orders.EmployeeID = Employees.EmployeeID
+     ORDER BY Orders.OrderID;
+     
+: The RIGHT JOIN keyword returns all records from the right table (Employees), even if there are no matches in the left table (Orders).
+
+>OUTPUT
+OrderID	LastName	  FirstName
+------- ----------- -----------
+ 	      West 	      Adam 
+10248 	Buchanan 	  Steven 
+10249 	Suyama  	  Michael 
+10250 	Peacock 	  Margaret 
+10251 	Leverling 	Janet 
+10252 	Peacock 	  Margaret 
+10253 	Leverling 	Janet 
+...
+
+
+
+[ FULL (OUTER) JOIN ]
+SELECT column_name(s)
+FROM table1
+FULL OUTER JOIN table2
+ON table1.column_name = table2.column_name
+WHERE condition;
+
+: The FULL OUTER JOIN keyword returns all records when there is a match in left (table1) or right (table2) table records.
+: FULL OUTER JOIN can potentially return very large result-sets!
+: FULL OUTER JOIN and FULL JOIN are the same.
+
+SQL> SELECT Customers.CustomerName, Orders.OrderID
+     FROM Customers
+     FULL OUTER JOIN Orders ON Customers.CustomerID=Orders.CustomerID
+     ORDER BY Customers.CustomerName;
+
+>OUTPUT
+CustomerName	                      OrderID
+----------------------------------- ---------
+Alfreds Futterkiste	                Null
+Ana Trujillo Emparedados y helados	10308
+Antonio Moreno Taquería             10365
+
+
+
+[ SELF JOIN ]
+SELECT column_name(s)
+FROM table1 T1, table1 T2
+WHERE condition;
+
+: A self JOIN is a regular join, but the table is joined with itself.
+: T1 and T2 are different table aliases for the same table.
+: 동일 테이블을 자기 참조에 의해 조인한다.
+: 테이블에 반드시 별명을 붙여야 한다.
+
+
+SQL> SELECT A.CustomerName AS CustomerName1, B.CustomerName AS CustomerName2, A.City
+     FROM Customers A, Customers B
+     WHERE A.CustomerID <> B.CustomerID
+     AND A.City = B.City 
+     ORDER BY A.City;
+
+>OUTPUT
+
+CustomerName1	                  CustomerName2	                    City
+------------------------------- --------------------------------- ---------------
+Cactus Comidas para llevar	    Océano Atlántico Ltda.	          Buenos Aires
+Cactus Comidas para llevar	    Rancho grande	Buenos              Aires
+Océano Atlántico Ltda.	        Cactus Comidas para llevar	      Buenos Aires
+Océano Atlántico Ltda.	        Rancho grande	Buenos              Aires
+Rancho grande	                  Cactus Comidas para llevar	      Buenos Aires
+Rancho grande	                  Océano Atlántico Ltda.	          Buenos Aires
+Furia Bacalhau e Frutos do Mar	Princesa Isabel Vinhoss	          Lisboa
+Princesa Isabel Vinhoss	        Furia Bacalhau e Frutos do Mar	  Lisboa
+Around the Horn	                B's Beverages	                    London
+Around the Horn	                Consolidated Holdings	            London
+Around the Horn	                Eastern Connection	              London
+Around the Horn	                North/South	                      London
+Around the Horn	                Seven Seas Imports	              London
+B's Beverages	                  Around the Horn	                  London
+...
+
+
+
+[ 서브쿼리 -  다중 행 ]
+SELECT [DISTINCT] column1, column2, ...
+FROM table_name
+WHERE column <다중 행 연산자> (SELECT column
+                              FROM table_name);
+       
+       
+<IN 연산자 사용>
+SQL> SELECT emplyee_id, first_name, job_id, salary
+     from employees
+     where manager_id IN (select manager_id
+                          from employees
+                          where department_id=20)
+     AND department_id <>20;
+
+>OUTPUT
+EMPLYEE_ID   FIRST_NAME   JOB_ID    SALARY
+----------- ------------- --------- --------
+101          Neena        AD_VF     17000
+102          Lex          AD_VF     17000
+103          Den          PU_MAN    17000
+104          Matthew      ST_MAN    17000
+105          Adam         ST_MAN    17000
+
+: 20번 부서원들과 같은 상사로부터 관리 받는 사원을 검색
+: IN 서브 쿼리에서 검색되는 값들 중 일치하는 값이 하나라도 있으면 검색
+
+
+<ANY 연산자 사용>
+SQL> SELECT employee_id, last_name, job_id, salary
+     FROM employees
+     WHERE salary < ANY (select salary
+                         from employees
+                         where job_id = 'ST_MAN')
+     AND job_id <> 'ST_MAN';
+
+>OUTPUT
+EMPLYEE_ID   FIRST_NAME   JOB_ID    SALARY
+----------- ------------- --------- --------
+173          Kumar        SA_REP    6100
+179          Johnson      SA_REP    6200 
+167          Banda        SA_REP    6200 
+166          Ande         SA_REP    6400 
+203          Mavris       HR_REP    6500 
+
+: 직책이 'SA_MAN'인 사원들 중 가장 많은 급여를 받는 사람보다 급여가 작은 사원을 검색
+
+- 서브쿼리
+  select salary
+  from employees
+  where job_id='ST_MAN'
+  >>
+  SALARY
+  -------
+  8000
+  8200
+  7900
+  6500
+  5800
+
+: ANY 는 검색된 값 중 조건에 맞는 것이 하나 있으면 참
+: 즉, 검색된 급여 중 어떤 값보다도 작으면 됨 (가장 큰 값 8000보다 낮은 급여 받으면 참)
+: 그래서 서브 쿼리의 검색된 급여 중 5800이 있음에도 불구하고 메인 쿼리에서 5800보다 많은 급여를 받는 사원들이 검색된 것               #??????????????????
+
+
+
+
+SQL> select employee_id, last_name, job_id, salary
+     from employees
+     where salary < ALL (select salary
+                         from employees
+                         where job_id = 'ST_MAN')
+     and job_id <> 'ST_MAN';
+
+>OUTPUT
+EMPLYEE_ID   FIRST_NAME   JOB_ID    SALARY
+----------- ------------- --------- --------
+106          Pataballa    IT_PROG   6100
+105          Austin       IT_PROG   6200 
+200          Whalen       AD_ASST   6200 
+184          Sarchand     SH_CLERK  6400 
+107          Lorentz      IT_PROG   6500 
+
+: 직책이 'ST_MAN'인 사원들 보다 급여가 낮은 사원 검색
+: ALL 은 모든 검색 값과 조건이 맞아야 함
+: ALL을 이용 검색된 모든 값보다 낮은 값을 검색 (서브 쿼리문에 검색된 모든 급여보다 낮아야 함 즉, 5800보다 낮은 급여 받는 사원 검색)
+
+↕ 결과 출력 같음 ↕
+SQL> select employee_id, last_name, job_id, salary
+     from employees
+     where salary < (select min(salary)
+                     from employees
+                     where job_in ='ST_MAN')
+     AND job_id<>'ST_MAN';
+
+
+* ANY / ALL
+  사용                의미                        같은 표현
+  ─────────────────┼──────────────────────────┼────────────────────
+  컬럼 > ANY          가장 작은 값보다 크다        컬럼 > MIN
+  컬럼 < ANY          가장 큰 값보다 작다          컬럼 < MAX
+  컬럼 > ALL          가장 큰 값보다 크다          컬럼 > MAX
+  컬럼 < ALL          가장 작은 값보다 작다        컬럼 < MIN
+  
+  
+  
+[ 서브쿼리 - 다중 열 ]
+SELECT [DISTINCT] column1, column2, ...
+FROM table_name
+WHERE (column_a, column_b, ...) IN (SELECT column_a, column_b, ...
+                                  FROM table_name);
+
+: 서브 쿼리 select 분에 여러 개의 컬럼 검색
+: 반드시 비교 대상 컬럼과 1:1 대응
+ 
+
+select employee_id, first_name, job_id, salary
+from employees
+where (manager_id, job_id) IN (select manager_id, job_id
+                               from emplyees
+                               where first_name = 'Bruce')
+AND first_name<>'Bruce';
+
+>OUTPUT
+EMPLYEE_ID   FIRST_NAME   JOB_ID    SALARY
+----------- ------------- --------- --------
+105          David        IT_PROG   4800 
+106          Valli        IT_PROG   4800
+107          Diana        IT_PROG   4200
+
+- 서브쿼리
+  select manager_id, job_id
+  from emplyees
+  where first_name = 'Bruce'
+  >>
+  MANAGER_ID    JOB_ID
+  ------------- --------
+  103           IT_PROG
+
+: manager_id가 103이면서 job_id가 'IT_PROG'인 사원들 검색
+: 검색 조건에 기술하는 컬럼들이 1:1대응 하여 모두 같아야 검색
+: 검색 조건이 동시에 검색된 두 개의 컬럼과 비교 시 다중 열 서브 쿼리 이용
+
+↕ 결과 출력 같음 ↕
+select employee_id, first_name, job_id, salary
+from employees
+where manager_id IN (select manager_id from employees where first_name = 'Bruce')
+AND job_id IN (select job_id from employees where first_name = 'Bruce')
+AND first_name <> 'Bruce';
+
+: 다중 열 서브쿼리는 조건을 따로 검색한 것과 같은 기능
+
+
+* 각 부서별로 최소 금여 받는 사원 정보 검색
+SQL> select department_id, employee_id, first_name, salary
+     from employees
+     where (department_id, salary) IN (select department_id, min(salary)
+                                       from employees
+                                       group by department_id)
+     ORDER BY department_id;
+
+>OUTPUT
+DEPARTMENT_ID EMPLOYEE_ID  first_name SALARY
+------------- ------------ ---------- --------
+10            200           Jennifer  4400 
+20            202           Pat       6000
+30            119           Karen     2500
+40            203           Susan     6500
+50            132           TJ        2100
+
+: 조건은 각 부서의 번호와 최소 급여가 둘 다 일치하는 사원을 찾는 문제인데, 이때 부서 번호와 급여를 각각 따로 조건 검색 할 방법이 없다.
+: 조건을 따로 검색하는 것이 불가능한 경우 그룹함수를 사용하는 전형적인 예
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
