@@ -1,0 +1,99 @@
+[ 서브 쿼리 ]
+: sql 문장 내에 쓰인 select 문장. (sql 문장 = 메인 쿼리)
+: WHERE, HAVING 절과 같이 조건 절에 주로 쓰임
+: 반드시 괄호로 묶음!
+: 메인 쿼리 실행 전 실행
+: 서브 쿼리 검색 결과 값은 메인 쿼리에 사용
+
+- 단일 행 : 서브 쿼리가 하나의 칼럼에서 하나의 행 검색
+- 다중 행 : 서브 쿼리가 하나의 컬럼에서 여러 개의 행 검색
+- 다중 열 : 서브 쿼리가 여러 개의 컬럼을 검색
+
+
+
+[ 서브쿼리 - 단일 행 ]
+SELECT [DISTINCT] column1, column2, ...
+FROM table_name
+WHERE column <단일 행 연산자> (SELECT column
+                              FROM table_name);
+
++) 단일 행 연산자(=, <, >, <=, >=, !=)
++) WHERE절에 기술된 컬럼의 타입은 서브 쿼리의 결과와 같아야 한다.
++) 반드시 서브 쿼리의 결과 값은 한 개만 검색
+                              
+                              
+SQL> SELECT last_name, salary
+     FROM employees
+     WHERE salary > (SELECT salary
+                     FROM employees
+                     WHERE last_name='Abel');
+         
+>OUTPUT
+LAST_NAME     SALARY
+------------ ---------
+King          24000
+Kochhar       17000
+De Haan       17000
+Greenberg     12008
+Russell       14000
+Partners      13500
+Errazuriz     12000
+Ozer          11500
+Hartstein     13000
+Higgins       12008
+                              
+                              
+- 서브쿼리
+  select salary
+  from employees
+  where last_name='Abel';
+  >>
+  SALARY
+  -------
+  11000
+  
+  : Abel의 급여는 11000
+                              
+                              
+* 에러 error
+select employee_id, last_name, salary
+from employees
+where salary > (select salary
+    from employees
+    where last_name = 'Smith');
+    
+ORA-01427: single-row subquery returns more than one row
+01427. 00000 -  "single-row subquery returns more than one row"
+
+: 단일 행 연산자를 사용할 때는 위와 같은 경우를 조심해야 한다. 
+: 위의 SQL 문장이 에러가 발생하는 이유는 서브쿼리를 따로 실행시켜 보면 알겠지만 'Smith'라는 성을 가진 사원이 2명이라서 서브 쿼리의 결과 값이 두 개가 검색되기 때문이다.
+
+
+select employee_id, last_name
+from employees
+where salary = (select min(salary)
+    from employees
+    group by department_id);
+
+ORA-01427: single-row subquery returns more than one row
+01427. 00000 -  "single-row subquery returns more than one row"
+
+: 이번에도 마찬가지로 서브 쿼리의 결과가 여러 행이 나왔기 때문에 에러가 발생했다.
+: 서브 쿼리를 group by 절로 묶어줌으로써 각 부서별로 최소 급여가 검색되어 12개의 행이 검색됐기 때문이다.
+
+! 따라서 단일 행 연산자를 사용할 때는 반드시 결과 값은 한 개만 검색돼야 한다.
+                              
+                              
+                              
+                              
+                              
+                              
+                              
+                              
+                              
+                              
+                              
+                              
+                              
+                              
+                              
