@@ -85,6 +85,15 @@ ORA-01427: single-row subquery returns more than one row
                               
                               
                               
+▶ 여러 번 사용된 단일 행 서브 쿼리
+
+select employee_id, last_name, department_id, salary
+from employees
+where department_id != (select department_id from employees where last_name = 'Hunold')
+and salary < (select salary from employees where last_name = 'Hunold');
+
+: 서브 쿼리는 문장 내에 필요하다면 여러 번 사용할 수 있다.
+
                               
                               
                               
