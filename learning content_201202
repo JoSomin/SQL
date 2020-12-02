@@ -1,0 +1,160 @@
+[ 날짜 함수 ]
+ : 문자처럼 표기 하지만 숫자처럼 계산되는 데이터
+ 
+    연산         변환 데이터 타입    결과
+ --------------	----------------- ---------------
+ 날짜 + 숫자      날짜              일수 이후 날짜
+ 날짜 - 숫자      날짜    	      일수 이전 날짜
+ 날짜 + 숫자/24   날짜              시간을 더한 날짜
+ 날짜 - 날짜      숫자              두 날 간에 차(일수)
+ 
+ 
+< SYSDATE >
+: 시스템의 현재 날짜 및 시간 변환
+ 
+SQL> select hire_date, hire_date + 3, hire_date -3
+		 from employees;
+>OUTPUT
+HIRE_DATE   HIRE_DATE+3   HIRE_DATE-3
+----------- ------------- ------------
+03/06/17    03/06/20      03/06/14
+05/09/21    05/09/24      05/09/18
+01/01/13    01/01/16      01/01/10
+06/01/03    06/01/06      05/12/31
+07/05/21    07/05/24      07/05/18
+
+ 
+ SQL> select syadate, hire_date, sysdate-hire_date "날짜 차이"
+      from employees;
+ >OUTPUT
+ SYSDATE       HIRE_DATE     날짜 차이
+ ------------ ------------- -----------------------
+ 17/12/03      03/06/17      5283.69346064814814...
+ 17/12/03      05/09/21      4456.69346064814814...
+ 17/12/03      01/01/13      6168.69346064814814...
+ 17/12/03      06/01/03      4352.69346064814814...
+ 17/12/03      07/05/21      3849.69346064814814...
+ 
+ >> 현재 날짜와 사원들의 고용일과의 날짜 차이
+ 날짜 차이가 소수점으로 나오는 이유 : 눈에 보이지 않지만 시분초에 해당하는 데이터 존재
+ 
+ 
+ | YYYY : 년도 / MM : 월 / DD : 일 / HH : 시간 / MI : 분 / SS : 초 |
+ 
+ < ROUND(날짜, 형식) >
+ : 형식에 맞추어 반올림한 날짜를 반환 
+ ex) ROUND(sysdate, 'DD') → 2017/12/04
+ 
+ SQL> select hire_date, round(hire_date, 'YY') 년, round(hire_date, 'MM') 월, round(hire_date, 'DD') 일
+     from employees
+     where employee_id = 101;
+ >OUTPUT
+ HIRE_DATE     년           월          일
+ ------------ ----------- ----------- ----------
+ 05/09/21      06/01/01    05/10/01    05/09/21
+ 
+ 
+ < TRUNC(날짜, 형식) >
+ : 형식에 맞추어 버림한 날짜를 반환
+ ex) TRRUNC(sysdate, 'YYYY') → 2017/01/01
+ 
+SQL> select hire_Date, trunc(hire_date, 'YY') 년, trunc(hire_date, 'MM') 월, truc(hire_date, 'DD') 일
+     from employees
+     where employee_id = 101;
+ >OUTPUT
+ HIRE_DATE  년	        월        일
+ ---------- --------  --------  ---------
+ 05/09/21   05/01/01  05/09/01  05/09/21
+ 
+ 
+ ▶ 사원 번호 101번인 사원의 일한 일수
+SQL> select trunc(sysdate, 'DD') - trunc(hire_date, 'DD') + 1 day
+     from employees
+     where employee_id = 101;
+>OUTPUT
+DAY
+----
+4457
+ 
+: 오늘 날짜에서 입사일을 빼면 입사일은 근무 일수에서 빠지므로 +1을 해준다
+
+
+▶ 부서번호 50번인 사원들의 근무 개월수
+
+SQL> select employee_id, first_name, trunc(months_between(sysdate, hire_date)) 근무개월수
+     from employees
+     where department_id = 50;
+>OUTPUT
+EMPLOYEE_ID FIRST_NAME  근무개월수
+----------- ----------- ----------
+       120  Matthew           160
+       121  Adam              151
+       122  Payam             175
+       123  Shanta            145
+       124  Kevin             120
+
+ 
+ < MONTHS_BETWEEN(날짜1, 날짜2) >
+ : 두 날짜간의 기간을 월 수로 계산
+ ex) MONTHS_BETWEEN('2017/10/10', '2017/07/10') → 3
+ 
+ 
+ < ADD_MONTHS(날짜, n) >
+ : 날짜에 n 달을 더한 날짜를 계산
+ ex) ADD_MONTHS('2017/07/10', 3) → 2017/10/10
+ 
+ 
+ < NEXT_DAY(날짜, 요일) >
+ : 날짜 이후 지정된 요일에 해당하는 날짜를 계산
+ : 요일 표현 : 'sun', '일요일', 1
+ ex) NEXT_DAY('2017/07/10', '토요일') → 2017/07/15
+ 
+ 
+ < LAST_DAY(날짜) >
+ : 날짜를 포함한 달의 마지막 날짜를 계산
+ ex) LAST_DAY('2017/07/10') → 2017/07/31
+ 
+ 
+ 
+ 
+ [ 데이터 변환 유형 ]
+ < 암시적 데이터 변환 >
+ : 자동으로 데이터 변환
+
+varchar2, char → number (문자가 유효한 숫자로만 나타내는 경우)
+varchar2, char →date
+number  → varchar2
+date  → varchar2
+
+ex) select '1' + '2'
+    from dual;
+    >>
+    '1'+'2'
+    -------
+         3
+  : 연산자 사용 시 문자 '1'과'2'를 숫자 1,2로 자동 변환
+ 
+ < 명시적 데이터 변환 >
+ : 변환 함수 사용하여 데이터 형 변환
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
